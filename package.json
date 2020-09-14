@@ -1,0 +1,24 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "Chat App",
+  "main": "server.js",
+  "dependencies": {
+    "apollo-server": "^2.17.0",
+    "graphql": "^15.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patrick204nqh/react-graphql-chat-app.git"
+  },
+  "author": "Patrick",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patrick204nqh/react-graphql-chat-app/issues"
+  },
+  "homepage": "https://github.com/patrick204nqh/react-graphql-chat-app#readme"
+}
