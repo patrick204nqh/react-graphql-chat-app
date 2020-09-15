@@ -29,11 +29,11 @@ module.exports = {
         if (password !== confirmPassword) errors.confirmPassword = 'Password must match';
 
         // TODO: Check if username / email exists
-        const userByUsername = await User.findOne({ where: { username } })
-        const userByEmail = await User.findOne({ where: { email } })
+        // const userByUsername = await User.findOne({ where: { username } })
+        // const userByEmail = await User.findOne({ where: { email } })
 
-        if (userByUsername) errors.username = 'Username is taken';
-        if (userByEmail) errors.email = 'Email is taken';
+        // if (userByUsername) errors.username = 'Username is taken';
+        // if (userByEmail) errors.email = 'Email is taken';
 
         if (Object.keys(errors).length > 0) {
           throw errors
@@ -53,6 +53,8 @@ module.exports = {
         console.log(err);
         if (err.name === 'SequelizeUniqueConstraintError') {
           err.errors.forEach(e => (errors[e.path] = `${e.path} is already taken`))
+        } else if (err.name === 'SequelizeValidationError') {
+          err.errors.forEach(e => (errors[e.path] = e.message))
         }
         throw new UserInputError('Bad input', { errors });
       }
