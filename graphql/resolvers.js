@@ -47,7 +47,11 @@ module.exports = {
 
         user.token = token;
 
-        return user;
+        return {
+          ...user.toJSON(),
+          createdAt: user.createdAt.toISOString(),
+          token
+        };
       } catch (err) {
         console.log(err);
         throw err
