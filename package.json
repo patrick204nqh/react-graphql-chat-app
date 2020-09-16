@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node server",
-    "dev": "nodemon server"
+    "dev": "nodemon server --ignore client/"
   },
   "repository": {
     "type": "git",
