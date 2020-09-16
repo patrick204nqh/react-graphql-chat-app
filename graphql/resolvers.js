@@ -55,7 +55,7 @@ module.exports = {
         const correctPassword = await bcrypt.compare(password, user.password);
 
         if (!correctPassword) {
-          errors.password = 'Password is incorrect';
+          errors.password = 'password is incorrect';
           throw new AuthenticationError('password is incorrect', { errors });
         }
 
@@ -81,12 +81,12 @@ module.exports = {
 
       try {
         // TODO: Validate input data
-        if (email.trim() === '') errors.email = 'Email must not be empty';
-        if (username.trim() === '') errors.username = 'Username must not be empty';
-        if (password.trim() === '') errors.password = 'Password must not be empty';
-        if (confirmPassword.trim() === '') errors.confirmPassword = 'Repeat password must not be empty';
+        if (email.trim() === '') errors.email = 'email must not be empty';
+        if (username.trim() === '') errors.username = 'username must not be empty';
+        if (password.trim() === '') errors.password = 'password must not be empty';
+        if (confirmPassword.trim() === '') errors.confirmPassword = 'repeat password must not be empty';
 
-        if (password !== confirmPassword) errors.confirmPassword = 'Password must match';
+        if (password !== confirmPassword) errors.confirmPassword = 'password must match';
 
         // TODO: Check if username / email exists
         // const userByUsername = await User.findOne({ where: { username } })
@@ -112,7 +112,7 @@ module.exports = {
       } catch (err) {
         console.log(err);
         if (err.name === 'SequelizeUniqueConstraintError') {
-          err.errors.forEach(e => (errors[e.path] = `${e.path} is already taken`))
+          err.errors.forEach(e => (errors.username = `username is already taken`))
         } else if (err.name === 'SequelizeValidationError') {
           err.errors.forEach(e => (errors[e.path] = e.message))
         }
