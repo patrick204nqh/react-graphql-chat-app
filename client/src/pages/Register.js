@@ -1,5 +1,14 @@
 import React, { useState } from 'react'
 import { Form, Button, Col, Row } from 'react-bootstrap';
+import { gql, useMutation } from '@apollo/client';
+
+const REGISTER_USER = gql`
+  mutation register($username: String! $email: String! $password: String! $confirmPassword: String!) {
+    register(username: $username email: $email password: $password confirmPassword: $confirmPassword) {
+      username email createdAt
+    }
+  }
+`;
 
 export default function Register() {
   const [variables, setVariables] = useState({
@@ -8,8 +17,20 @@ export default function Register() {
     password: '',
     confirmPassword: '',
   });
+
+  const [registerUser, { loading }] = useMutation(REGISTER_USER, {
+    update(_, res) {
+      console.log(res);
+    },
+    onError(err) {
+      console.log(err);
+    }
+  })
+
   const submitRegisterForm = e => {
     e.preventDefault();
+
+    registerUser({ variables });
   }
 
   return (
@@ -25,7 +46,7 @@ export default function Register() {
               onChange={e => setVariables({ ...variables, email: e.target.value })}
             />
           </Form.Group>
-          <Form.Group controlId="formBasicPassword">
+          <Form.Group>
             <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
@@ -33,14 +54,14 @@ export default function Register() {
               onChange={e => setVariables({ ...variables, username: e.target.value })}
             />
           </Form.Group>
-          <Form.Group controlId="formBasicPassword">
+          <Form.Group>
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
               value={variables.password}
               onChange={e => setVariables({ ...variables, password: e.target.value })} />
           </Form.Group>
-          <Form.Group controlId="formBasicPassword">
+          <Form.Group>
             <Form.Label>Confirm password</Form.Label>
             <Form.Control
               type="password"
