@@ -3,25 +3,14 @@ const { UserInputError, AuthenticationError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 
-const { User } = require('../models');
+const { User, Message } = require('../models');
 const { JWT_SECRET } = require('../config/env.json');
 
 module.exports = {
   Query: {
-    getUsers: async (_, __, context) => {
+    getUsers: async (_, __, { user }) => {
       try {
-        let user;
-
-        if (context.req && context.req.headers.authorization) {
-          const token = context.req.headers.authorization.split('Bearer ')[1];
-          jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
-            if (err) {
-              throw new AuthenticationError('unauthenticated');
-            }
-            user = decodedToken;
-          })
-        }
-
+        if (!user) throw new AuthenticationError('unauthenticated');
         const users = await User.findAll({
           where: { username: { [Op.ne]: user.username } }
         });
@@ -117,6 +106,25 @@ module.exports = {
           err.errors.forEach(e => (errors[e.path] = e.message))
         }
         throw new UserInputError('Bad input', { errors });
+      }
+    },
+    sendMessage: async (parent, { to, content }, { user }) => {
+      try {
+        if (!user) throw new AuthenticationError('unauthenticated');
+
+        const recipient = await User.findOne({ where: { username: to } })
+
+        if (!recipient) {
+          throw new UserInputError('User not found')
+        }
+
+        if (content.trim() === '') {
+          throw new UserInputError('Message is empty')
+        }
+
+        // const message = await
+      } catch (err) {
+        throw err;
       }
     }
   }

@@ -7,6 +7,12 @@ module.exports = gql`
     createdAt: String!
     token: String!
   }
+  type Message {
+    uuid: String!
+    content: String!
+    from: String!
+    to: String!
+  }
   type Query {
     getUsers: [User]!
     login(username: String!, password: String!): User!
@@ -18,5 +24,6 @@ module.exports = gql`
       password: String!
       confirmPassword: String!
     ): User!
+    sendMessage(to: String! content: String!): Message!
   }
 `;
