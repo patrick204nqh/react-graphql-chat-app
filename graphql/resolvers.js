@@ -122,7 +122,13 @@ module.exports = {
           throw new UserInputError('Message is empty')
         }
 
-        // const message = await
+        const message = await Message.create({
+          from: user.username,
+          to,
+          content,
+        });
+
+        return message;
       } catch (err) {
         throw err;
       }
