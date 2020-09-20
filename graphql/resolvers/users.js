@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 
-const { User } = require('../../models');
+const { User, Message } = require('../../models');
 const { JWT_SECRET } = require('../../config/env.json');
 
 module.exports = {
@@ -11,9 +11,26 @@ module.exports = {
     getUsers: async (_, __, { user }) => {
       try {
         if (!user) throw new AuthenticationError('unauthenticated');
-        const users = await User.findAll({
+
+        let users = await User.findAll({
+          attributes: ['username', 'imageUrl', 'createdAt'],
           where: { username: { [Op.ne]: user.username } }
         });
+
+        const allUserMessages = await Message.findAll({
+          where: {
+            [Op.or]: [{ from: user.username }, { to: user.username }]
+          },
+          order: [['createdAt', 'DESC']]
+        })
+
+        users = users.map(otherUser => {
+          const latestMessage = allUserMessages.find(
+            m => m.from === otherUser.username || m.to === otherUser.username
+          )
+          otherUser.latestMessage = latestMessage
+          return otherUser
+        })
 
         return users;
       } catch (err) {
@@ -54,7 +71,7 @@ module.exports = {
 
         return {
           ...user.toJSON(),
-          createdAt: user.createdAt.toISOString(),
+          // createdAt: user.createdAt.toISOString(),
           token
         };
       } catch (err) {
