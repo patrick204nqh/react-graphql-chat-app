@@ -41,8 +41,6 @@ export default function Home({ history }) {
     }
   }, [selectedUser]);
 
-  if (messagesData) console.log(messagesData.getMessages)
-
   const { loading, data, error } = useQuery(GET_USERS)
 
   let usersMarkup;
@@ -93,7 +91,11 @@ export default function Home({ history }) {
           {usersMarkup}
         </Col>
         <Col xs={8}>
-          <p>Messages</p>
+          {messagesData && messagesData.getMessages.length > 0 ? (
+            messagesData.getMessages.map(message => (
+              <p key={message.uuid}>{message.content}</p>
+            ))
+          ) : <p>You are now connected!</p>}
         </Col>
       </Row>
     </>
