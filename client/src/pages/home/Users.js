@@ -2,6 +2,8 @@ import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { Col, Image } from 'react-bootstrap'
 
+import { useMessageDispatch, useMessageState } from '../../context/message';
+
 const GET_USERS = gql`
   query getUsers {
     getUsers {
@@ -14,16 +16,25 @@ const GET_USERS = gql`
 `;
 
 export default function Users({ setSelectedUser }) {
-  const { loading, data, error } = useQuery(GET_USERS)
+  const dispatch = useMessageDispatch();
+  const { users } = useMessageState();
+  const { loading } = useQuery(GET_USERS, {
+    onCompleted: (data) => dispatch({
+      type: 'SET_USERS',
+      payload: data.getUsers
+    }),
+    onError: err => console.log(err)
+  })
 
   let usersMarkup;
-  if (!data || loading) {
+  if (!users || loading) {
     usersMarkup = <p>loading..</p>
-  } else if (data.getUsers.length === 0) {
+  } else if (users.length === 0) {
     usersMarkup = <p>no users have joined yet </p>
-  } else if (data.getUsers.length > 0) {
-    usersMarkup = data.getUsers.map(user => (
+  } else if (users.length > 0) {
+    usersMarkup = users.map(user => (
       <div
+        role="button"
         className="d-flex p-3"
         key={user.username}
         onClick={() => setSelectedUser(user.username)}
