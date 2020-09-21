@@ -16,9 +16,11 @@ const GET_USERS = gql`
   }
 `;
 
-export default function Users({ setSelectedUser, selectedUser }) {
-  const dispatch = useMessageDispatch();
-  const { users } = useMessageState();
+export default function Users() {
+  const dispatch = useMessageDispatch()
+  const { users } = useMessageState()
+  const selectedUser = users?.find(u => u.selected === true)
+
   const { loading } = useQuery(GET_USERS, {
     onCompleted: (data) => dispatch({
       type: 'SET_USERS',
@@ -40,7 +42,10 @@ export default function Users({ setSelectedUser, selectedUser }) {
           role="button"
           className={classNames("user-div d-flex p-3", { 'bg-white': selected })}
           key={user.username}
-          onClick={() => setSelectedUser(user.username)}
+          onClick={() => dispatch({
+            type: 'SET_SELECTED_USER',
+            payload: user.username
+          })}
         >
           <Image
             src={user.imageUrl}
