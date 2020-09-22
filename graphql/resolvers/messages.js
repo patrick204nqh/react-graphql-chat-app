@@ -1,4 +1,4 @@
-const { UserInputError, AuthenticationError } = require('apollo-server');
+const { UserInputError, AuthenticationError, withFilter } = require('apollo-server');
 const { Op } = require('sequelize');
 
 const { User, Message } = require('../../models');
@@ -65,10 +65,15 @@ module.exports = {
   },
   Subscription: {
     newMessage: {
-      subscribe: (_, __, { pubsub, user }) => {
+      subscribe: withFilter((_, __, { pubsub, user }) => {
         if (!user) throw new AuthenticationError('Unauthenticated')
         return pubsub.asyncIterator(['NEW_MESSAGE'])
-      }
+      }, ({ newMessage }, _, { user }) => {
+        if (newMessage.from === user.username || newMessage.to === user.username) {
+          return true
+        }
+        return false
+      })
     }
   }
 };
