@@ -44,9 +44,10 @@ export default function Messages() {
   } else if (messagesLoading) {
     selectedChatMarkup = <p>Loading...</p>
   } else if (messages.length > 0) {
-    selectedChatMarkup = messagesData.getMessages.map(message => (
+    selectedChatMarkup = messages?.map(message => (
       <p key={message.uuid}>{message.content}</p>
     ))
+    console.log(messagesData.getMessages)
   } else if (messages.length === 0) {
     selectedChatMarkup = <p>You are now connected! Send your first message</p>
   }
