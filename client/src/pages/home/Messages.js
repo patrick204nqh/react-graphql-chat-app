@@ -45,8 +45,15 @@ export default function Messages() {
   } else if (messagesLoading) {
     selectedChatMarkup = <p>Loading...</p>
   } else if (messages.length > 0) {
-    selectedChatMarkup = messages?.map(message => (
-      <Message message={message} />
+    selectedChatMarkup = messages?.map((message, index) => (
+      <>
+        <Message message={message} />
+        {index === messages.length - 1 && (
+          <div className="invisible">
+            <hr className="m-0" />
+          </div>
+        )}
+      </>
     ))
   } else if (messages.length === 0) {
     selectedChatMarkup = <p>You are now connected! Send your first message</p>
