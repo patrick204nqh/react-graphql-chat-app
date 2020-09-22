@@ -13,8 +13,12 @@ export default function Message({ message }) {
     <OverlayTrigger
       placement={sent ? 'right' : 'left'}
       overlay={
-        <Tooltip >{moment(message.createdAt).format('MMMM DD, YYYY @ h:mm a')}</Tooltip>
-      }>
+        <Tooltip >
+          {moment(message.createdAt).format('MMMM DD, YYYY @ h:mm a')}
+        </Tooltip>
+      }
+      transition={false}
+    >
       <div className={classNames('d-flex my-3', {
         'ml-auto': sent,
         'mr-auto': received
