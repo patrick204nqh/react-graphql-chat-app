@@ -53,7 +53,7 @@ export default function Users() {
           })}
         >
           <Image
-            src={user.imageUrl}
+            src={user.imageUrl || 'https://i.ibb.co/5hSwqj0/patrick-v2-black-bg.png'}
             className="user-image"
           />
           <div className="d-none d-md-block ml-2">
