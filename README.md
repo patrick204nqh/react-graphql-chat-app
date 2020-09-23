@@ -5,5 +5,7 @@
 - How to run
 
 > npm run dev
+
 > cd client
+
 > npm start
