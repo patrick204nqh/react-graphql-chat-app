@@ -21,6 +21,7 @@ export default function Message({ message }) {
   const sent = message.from === user.username
   const received = !sent
   const [showPopover, setShowPopover] = useState(false)
+  const reactionIcons = [... new Set(message.reactions.map(r => r.content))]
 
   const [reactToMessage] = useMutation(REACT_TO_MESSAGE, {
     onError: err => console.log(err),
@@ -79,13 +80,20 @@ export default function Message({ message }) {
         }
         transition={false}
       >
-        <div className={classNames('py-2 px-3 rounded-pill', {
+        <div className={classNames('py-2 px-3 rounded-pill position-relative', {
           'bg-primary': sent,
           'bg-secondary': received
         })}>
-          <p key={message.uuid} className={
-            classNames({ 'text-white': sent })
-          }>
+          {message.reactions.length > 0 && (
+            <div className="reactions-div bg-secondary p-1 rounded-pill">
+              {reactionIcons} {message.reactions.length}
+            </div>
+          )}
+          <p
+            key={message.uuid}
+            className={
+              classNames({ 'text-white': sent })
+            }>
             {message.content}
           </p>
         </div>
