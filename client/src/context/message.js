@@ -54,7 +54,7 @@ const messageReducer = (state, action) => {
       let userCopy = { ...usersCopy[userIndex] }
 
       // Find the index of the message that this reaction pertains to
-      const messageIndex = userCopy.message?.findIndex(
+      const messageIndex = userCopy.messages?.findIndex(
         (m) => m.uuid === reaction.message.uuid
       )
 
