@@ -1,10 +1,20 @@
 import React, { useState } from 'react'
 import classNames from 'classnames'
 import moment from 'moment'
-import { useAuthState } from '../../context/auth'
 import { Button, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap'
 
+import { gql, useMutation } from '@apollo/client'
+import { useAuthState } from '../../context/auth'
+
 const reactions = ['❤️', '😆', '😯', '😢', '😡', '👍', '👎']
+
+const REACT_TO_MESSAGE = gql`
+  mutation reactToMessage($uuid: String! $content: String!) {
+    reactToMessage(uuid: $uuid, content: $content) {
+      uuid
+    }
+  }
+`
 
 export default function Message({ message }) {
   const { user } = useAuthState()
@@ -12,8 +22,13 @@ export default function Message({ message }) {
   const received = !sent
   const [showPopover, setShowPopover] = useState(false)
 
+  const [reactToMessage] = useMutation(REACT_TO_MESSAGE, {
+    onError: err => console.log(err),
+    onCompleted: data => setShowPopover(false)
+  })
+
   const react = (reaction) => {
-    console.log(`Reacting ${reaction} to message: ${message.uuid}`)
+    reactToMessage({ variables: { uuid: message.uuid, content: reaction } })
   }
 
   const reactButton = (
@@ -23,6 +38,7 @@ export default function Message({ message }) {
       show={showPopover}
       onToggle={setShowPopover}
       transition={false}
+      rootClose
       overlay={
         <Popover
           className="rounded-pill"
