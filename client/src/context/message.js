@@ -5,7 +5,7 @@ const MessageDispatchContext = createContext();
 
 const messageReducer = (state, action) => {
   let usersCopy, userIndex
-  const { username, message, messages } = action.payload
+  const { username, message, messages, reaction } = action.payload
 
   switch (action.type) {
     case 'SET_USERS':
@@ -46,6 +46,46 @@ const messageReducer = (state, action) => {
         ...state,
         users: usersCopy
       }
+    case 'ADD_REACTION':
+      usersCopy = [...state.users]
+      userIndex = usersCopy.findIndex(u => u.username === username)
+
+      // Make a shallow copy of user
+      let userCopy = { ...usersCopy[userIndex] }
+
+      // Find the index of the message that this reaction pertains to
+      const messageIndex = userCopy.message?.findIndex(m => m.uuid === reaction.message.uuid)
+
+      if (messageIndex > -1) {
+        // Make a shallow copy of user messages
+        let messagesCopy = [...userCopy.messages]
+
+        // Make a shallow copy of user message reactions
+        let reactionsCopy = [...messagesCopy[messageIndex].reactions]
+
+        const reactionIndex = reactionsCopy.findIndex(r => r.uuid === reaction.uuid)
+
+        if (reactionIndex > -1) {
+          // Reaction exists, update it
+          reactionsCopy[reactionIndex] = reaction
+        } else {
+          // New Reaction, add it
+          reactionsCopy = [...reactionsCopy, reaction]
+        }
+
+        messagesCopy[messageIndex] = {
+          ...messagesCopy[messageIndex],
+          reactions: reactionsCopy
+        }
+
+        userCopy = { ...userCopy, messages: messagesCopy }
+        usersCopy[userIndex] = userCopy
+      }
+      return {
+        ...state,
+        users: usersCopy
+      }
+
     default:
       throw new Error(`unknown action type: ${action.type}`)
   }
