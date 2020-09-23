@@ -48,13 +48,15 @@ const messageReducer = (state, action) => {
       }
     case 'ADD_REACTION':
       usersCopy = [...state.users]
-      userIndex = usersCopy.findIndex(u => u.username === username)
+      userIndex = usersCopy.findIndex((u) => u.username === username)
 
       // Make a shallow copy of user
       let userCopy = { ...usersCopy[userIndex] }
 
       // Find the index of the message that this reaction pertains to
-      const messageIndex = userCopy.message?.findIndex(m => m.uuid === reaction.message.uuid)
+      const messageIndex = userCopy.message?.findIndex(
+        (m) => m.uuid === reaction.message.uuid
+      )
 
       if (messageIndex > -1) {
         // Make a shallow copy of user messages
@@ -63,7 +65,9 @@ const messageReducer = (state, action) => {
         // Make a shallow copy of user message reactions
         let reactionsCopy = [...messagesCopy[messageIndex].reactions]
 
-        const reactionIndex = reactionsCopy.findIndex(r => r.uuid === reaction.uuid)
+        const reactionIndex = reactionsCopy.findIndex(
+          (r) => r.uuid === reaction.uuid
+        )
 
         if (reactionIndex > -1) {
           // Reaction exists, update it
@@ -75,12 +79,13 @@ const messageReducer = (state, action) => {
 
         messagesCopy[messageIndex] = {
           ...messagesCopy[messageIndex],
-          reactions: reactionsCopy
+          reactions: reactionsCopy,
         }
 
         userCopy = { ...userCopy, messages: messagesCopy }
         usersCopy[userIndex] = userCopy
       }
+
       return {
         ...state,
         users: usersCopy
