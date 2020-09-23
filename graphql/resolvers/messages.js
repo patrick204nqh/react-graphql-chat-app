@@ -67,7 +67,7 @@ module.exports = {
         throw err;
       }
     },
-    reactToMessage: async (_, { uuid, content }, { user }) => {
+    reactToMessage: async (_, { uuid, content }, { user, pubsub }) => {
       const reactions = ['❤️', '😆', '😯', '😢', '😡', '👍', '👎']
 
       try {
@@ -106,6 +106,8 @@ module.exports = {
           })
         }
 
+        pubsub.publish('NEW_REACTION', { newReaction: reaction })
+
         return reaction
       } catch (err) {
         throw err
@@ -122,7 +124,21 @@ module.exports = {
           return true
         }
         return false
-      })
-    }
+      }),
+    },
+    newReaction: {
+      subscribe: withFilter(
+        (_, __, { pubsub, user }) => {
+          if (!user) throw new AuthenticationError('Unauthenticated')
+          return pubsub.asyncIterator(['NEW_REACTION'])
+        },
+        async ({ newReaction }, _, { user }) => {
+          const message = await newReaction.getMessage()
+          if (message.from === user.username || message.to === user.username) {
+            return true
+          }
+          return false
+        })
+    },
   }
-};
+}
