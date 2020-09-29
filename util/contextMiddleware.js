@@ -1,7 +1,6 @@
 const { PubSub } = require('apollo-server');
 // const { AuthenticationError } = require('apollo-server');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config/env.json');
 
 const pubsub = new PubSub()
 
@@ -14,7 +13,7 @@ module.exports = (context) => {
   }
 
   if (token) {
-    jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
       context.user = decodedToken;
     })
   }
